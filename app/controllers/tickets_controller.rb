@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class TicketsController < ApplicationController
-  before_action :load_ticket, only: %i(edit update show)
+  before_action :load_ticket, only: %i[edit update show]
 
   def index
     redirect_to root_path
@@ -22,13 +24,13 @@ class TicketsController < ApplicationController
     redirect_to [:edit, @ticket]
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
-    if @ticket.update(ticket_update_params)
+    if Gate.find(params[:ticket][:exited_gate_id]).exit?(@ticket) && @ticket.update(ticket_update_params)
       redirect_to root_path, notice: '降車しました。😄'
     else
+      flash[:alert] = '降車駅 では降車できません。'
       render :edit
     end
   end
