@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TicketsController < ApplicationController
-  before_action :load_ticket, only: %i[edit update show]
+  before_action :check_expiration, only: %i[edit update]
 
   def index
     redirect_to root_path
@@ -21,6 +21,7 @@ class TicketsController < ApplicationController
   end
 
   def show
+    @ticket = Ticket.find(params[:id])
     redirect_to [:edit, @ticket]
   end
 
@@ -31,7 +32,7 @@ class TicketsController < ApplicationController
       redirect_to root_path, notice: '降車しました。😄'
     else
       flash[:alert] = '降車駅 では降車できません。'
-      render :edit
+      redirect_to [:edit, @ticket], alert: '降車駅 では降車できません。'
     end
   end
 
@@ -45,7 +46,8 @@ class TicketsController < ApplicationController
     params.require(:ticket).permit(:exited_gate_id)
   end
 
-  def load_ticket
+  def check_expiration
     @ticket = Ticket.find(params[:id])
+    redirect_to root_path, alert: '降車済みの切符です。' if @ticket.exited_gate_id
   end
 end
