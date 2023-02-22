@@ -3,7 +3,6 @@
 class TicketsController < ApplicationController
   before_action :load_ticket, only: %i[edit update show]
   before_action :invaild_ticket?, only: %i[edit update]
-  before_action :valid_destination?, only: %i[update]
 
   def index
     redirect_to root_path
@@ -32,7 +31,7 @@ class TicketsController < ApplicationController
     if @ticket.update(ticket_update_params)
       redirect_to root_path, notice: '降車しました。😄'
     else
-      render :edit
+      redirect_to [:edit, @ticket], alert: @ticket.errors.where(:base).first.full_message.to_s
     end
   end
 
@@ -52,11 +51,5 @@ class TicketsController < ApplicationController
 
   def invaild_ticket?
     redirect_to root_path, alert: '降車済みの切符です。' if @ticket.exited_gate_id
-  end
-
-  def valid_destination?
-    return if Gate.find(params[:ticket][:exited_gate_id]).exit?(@ticket)
-
-    redirect_to [:edit, @ticket], alert: '降車駅 では降車できません。'
   end
 end
