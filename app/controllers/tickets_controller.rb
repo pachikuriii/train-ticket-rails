@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class TicketsController < ApplicationController
+  before_action :load_ticket, only: %i[edit update show]
   before_action :check_expiration, only: %i[edit update]
 
   def index
@@ -21,7 +22,6 @@ class TicketsController < ApplicationController
   end
 
   def show
-    @ticket = Ticket.find(params[:id])
     redirect_to [:edit, @ticket]
   end
 
@@ -46,8 +46,11 @@ class TicketsController < ApplicationController
     params.require(:ticket).permit(:exited_gate_id)
   end
 
-  def check_expiration
+  def load_ticket
     @ticket = Ticket.find(params[:id])
+  end
+
+  def check_expiration
     redirect_to root_path, alert: '降車済みの切符です。' if @ticket.exited_gate_id
   end
 end
