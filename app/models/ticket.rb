@@ -7,6 +7,8 @@ class Ticket < ApplicationRecord
   validates :entered_gate_id, presence: true
   validate :valid_destination?, on: :update
 
+  private
+
   def valid_destination?
     return if Gate.find(exited_gate_id).exit?(self)
 
