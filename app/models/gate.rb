@@ -10,7 +10,7 @@ class Gate < ApplicationRecord
   scope :order_by_station_number, -> { order(:station_number) }
 
   def exit?(ticket)
-    entered_station_number = Gate.find(ticket.entered_gate_id).station_number
+    entered_station_number = ticket.entered_gate.station_number
     moved_distance = (station_number - entered_station_number).abs
     !moved_distance.zero? && MAX_DISTANCE[ticket.fare] >= moved_distance
   end
