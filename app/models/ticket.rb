@@ -10,7 +10,7 @@ class Ticket < ApplicationRecord
   private
 
   def validate_destination
-    return if Gate.find(exited_gate_id).exit?(self)
+    return if exited_gate.exit?(self)
 
     errors.add :exited_gate, message: 'では降車できません。'
   end
