@@ -31,7 +31,7 @@ class TicketsController < ApplicationController
     if @ticket.update(ticket_update_params)
       redirect_to root_path, notice: '降車しました。😄'
     else
-      redirect_to [:edit, @ticket], alert: @ticket.errors.where(:base).first.full_message.to_s
+      render :edit
     end
   end
 
