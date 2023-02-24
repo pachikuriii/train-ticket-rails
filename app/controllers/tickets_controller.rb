@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 class TicketsController < ApplicationController
-  before_action :load_ticket, only: %i(edit update show)
+  before_action :load_ticket, only: %i[edit update show]
+  before_action :validate_ticket, only: %i[edit update]
 
   def index
     redirect_to root_path
@@ -22,8 +25,7 @@ class TicketsController < ApplicationController
     redirect_to [:edit, @ticket]
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
     if @ticket.update(ticket_update_params)
@@ -45,5 +47,9 @@ class TicketsController < ApplicationController
 
   def load_ticket
     @ticket = Ticket.find(params[:id])
+  end
+
+  def validate_ticket
+    redirect_to root_path, alert: '降車済みの切符です。' if @ticket.exited_gate.present?
   end
 end
