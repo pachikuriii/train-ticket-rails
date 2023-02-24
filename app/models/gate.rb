@@ -11,6 +11,6 @@ class Gate < ApplicationRecord
   def exit?(ticket)
     moved_distance = (station_number - ticket.entered_gate.station_number).abs
     max_distance = FARES.index(ticket.fare) + 1
-    !moved_distance.zero? && max_distance >= moved_distance
+    moved_distance.positive? && max_distance >= moved_distance
   end
 end
